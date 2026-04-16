@@ -81,6 +81,15 @@ func (p *MachineProvider) createMachine(ctx context.Context, req *driver.CreateM
 		return nil, status.Error(codes.Internal, "userData doesn't exist")
 	}
 
+	klog.Infof("DEBUG: userData length=%d, first 100 bytes=%q", len(userData), string(userData[:min(100, len(userData))]))
+	klog.Infof("DEBUG: secret keys: %v", func() []string {
+		keys := make([]string, 0, len(secret.Data))
+		for k := range secret.Data {
+			keys = append(keys, k)
+		}
+		return keys
+	}())
+
 	client := apis.GetClientForToken(string(secret.Data["token"]))
 
 	server, _, _ := client.Server.GetByName(ctx, machine.Name)
@@ -146,6 +155,8 @@ func (p *MachineProvider) createMachine(ctx context.Context, req *driver.CreateM
 	}
 
 	opts.SSHKeys = append(opts.SSHKeys, sshKey)
+
+	klog.Infof("DEBUG: ServerCreateOpts UserData length=%d, SSHKeys count=%d, SSHKey ID=%d, SSHKey Name=%q", len(opts.UserData), len(opts.SSHKeys), sshKey.ID, sshKey.Name)
 
 	if providerSpec.NetworkName != "" {
 		network, _, err := client.Network.GetByName(ctx, providerSpec.NetworkName)
