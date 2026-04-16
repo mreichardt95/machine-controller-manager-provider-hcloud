@@ -33,7 +33,7 @@ import (
 const defaultMachineOperationInterval = 5 * time.Second
 
 // Constant defaultMachineOperationRetries is the maximum number of retries
-const defaultMachineOperationRetries = 5
+const defaultMachineOperationRetries = 60
 
 // GetRegionFromZone returns the region for a given zone string
 //
