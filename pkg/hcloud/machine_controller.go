@@ -19,7 +19,6 @@ package hcloud
 
 import (
 	"context"
-	"encoding/base64"
 	"fmt"
 	"net/url"
 	"strconv"
@@ -100,7 +99,7 @@ func (p *MachineProvider) createMachine(ctx context.Context, req *driver.CreateM
 	}
 
 	imageName := providerSpec.ImageName
-	userDataBase64Enc := base64.StdEncoding.EncodeToString(userData)
+	userDataStr := string(userData)
 
 	image, _, err := client.Image.GetByName(ctx, imageName)
 	if err != nil {
@@ -135,7 +134,7 @@ func (p *MachineProvider) createMachine(ctx context.Context, req *driver.CreateM
 			"topology.kubernetes.io/zone":   zone,
 		},
 		Datacenter:       &hcloud.Datacenter{Name: zone},
-		UserData:         userDataBase64Enc,
+		UserData:         userDataStr,
 		StartAfterCreate: &startAfterCreate,
 	}
 
