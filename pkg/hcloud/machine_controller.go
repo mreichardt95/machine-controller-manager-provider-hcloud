@@ -98,7 +98,7 @@ func (p *MachineProvider) createMachine(ctx context.Context, req *driver.CreateM
 		return nil, status.Error(errorCode, "Server already exists")
 	}
 
-	imageName := providerSpec.ImageName
+	imageName := string(providerSpec.ImageName)
 	userDataStr := string(userData)
 
 	var image *hcloud.Image

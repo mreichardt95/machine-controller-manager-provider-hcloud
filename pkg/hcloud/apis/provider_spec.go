@@ -17,13 +17,35 @@ limitations under the License.
 // Package apis is the main package for provider specific APIs
 package apis
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
+// FlexString is a string that can be unmarshaled from both JSON strings and numbers.
+type FlexString string
+
+func (f *FlexString) UnmarshalJSON(data []byte) error {
+	var s string
+	if err := json.Unmarshal(data, &s); err == nil {
+		*f = FlexString(s)
+		return nil
+	}
+	var n json.Number
+	if err := json.Unmarshal(data, &n); err == nil {
+		*f = FlexString(n.String())
+		return nil
+	}
+	return fmt.Errorf("cannot unmarshal %s into FlexString", string(data))
+}
+
 // ProviderSpec is the spec to be used while parsing the calls.
 type ProviderSpec struct {
-	Cluster        string `json:"cluster"`
-	Zone           string `json:"zone"`
-	ServerType     string `json:"serverType"`
-	ImageName      string `json:"imageName"`
-	SSHFingerprint string `json:"sshFingerprint"`
+	Cluster        string     `json:"cluster"`
+	Zone           string     `json:"zone"`
+	ServerType     string     `json:"serverType"`
+	ImageName      FlexString `json:"imageName"`
+	SSHFingerprint string     `json:"sshFingerprint"`
 
 	PlacementGroupID string `json:"placementGroupID,omitempty"`
 	FloatingPoolName string `json:"floatingPoolName,omitempty"`
