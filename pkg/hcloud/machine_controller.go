@@ -141,7 +141,7 @@ func (p *MachineProvider) createMachine(ctx context.Context, req *driver.CreateM
 			"topology.kubernetes.io/region": region,
 			"topology.kubernetes.io/zone":   zone,
 		},
-		Datacenter:       &hcloud.Datacenter{Name: zone},
+		Location:         &hcloud.Location{Name: region},
 		UserData:         userDataStr,
 		StartAfterCreate: &startAfterCreate,
 	}
